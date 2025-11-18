@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ProWellbeing — Student Support & Engagement</title>
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --accent:#7c3aed; --accent-2:#6ee7b7;
+      --muted:#64748b; --radius:12px; --glass: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#f8fafc 0%, #eef2ff 100%);color:#0f172a}
+    header.site-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.9);backdrop-filter: blur(6px);box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+
+    /* Navbar */
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav ul{display:flex;gap:10px;list-style:none;padding:0;margin:0}
+    nav a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:600}
+    nav a:hover{background:rgba(99,102,241,0.08);color:var(--accent)}
+    .actions{display:flex;gap:8px;align-items:center}
+    .btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#5b21b6);color:white}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:center;padding:34px 0}
+
+    /* Hero card */
+    .card{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+    .kicker{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,#ecfeff,#bbf7d0);font-weight:700;color:#065f46;margin-bottom:12px}
+    h1{font-size:28px;margin:0 0 8px}
+    p.lead{margin:0;color:var(--muted)}
+
+    /* Sections */
+    .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+
+    /* Study cards */
+    .study-card{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);transition:transform .25s, box-shadow .25s;cursor:pointer}
+    .study-card:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(15,23,42,0.08)}
+    .pill{display:inline-block;padding:6px 8px;border-radius:999px;background:#eff6ff;color:#1e3a8a;font-weight:700;font-size:13px}
+
+    /* Quiz */
+    .quiz-q{margin-bottom:12px}
+    .option{display:block;padding:10px;border-radius:8px;border:1px solid #e6e9ef;margin-bottom:8px;cursor:pointer}
+    .option.correct{border-color:#10b981;background:#ecfdf5}
+    .option.wrong{border-color:#ef4444;background:#fff1f2}
+
+    /* Mock test timer */
+    .timer{font-weight:800;color:var(--accent)}
+
+    /* Live room */
+    .live-room{display:flex;flex-direction:column;height:360px}
+    .messages{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+    .msg{max-width:75%;padding:10px;border-radius:10px;background:#f1f5f9}
+    .msg.you{background:linear-gradient(90deg,#e9d5ff,#ede9fe);align-self:flex-end}
+
+    /* Chatbot widget */
+    .chatbot-btn{position:fixed;right:18px;bottom:18px;background:linear-gradient(90deg,var(--accent),#4f46e5);color:white;padding:12px;border-radius:999px;box-shadow:0 8px 24px rgba(15,23,42,0.18);border:0;cursor:pointer}
+    .chatbot-panel{position:fixed;right:18px;bottom:78px;width:360px;max-width:calc(100% - 36px);background:var(--card);border-radius:12px;box-shadow:0 18px 40px rgba(15,23,42,0.14);overflow:hidden;display:flex;flex-direction:column}
+    .chatbot-header{padding:12px;background:linear-gradient(90deg,#7c3aed,#5b21b6);color:white;font-weight:700}
+    .chatbot-body{padding:12px;display:flex;flex-direction:column;gap:10px}
+    .chatbot-log{max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+    .chatbot-input{display:flex;gap:8px;padding:8px;border-top:1px solid #eef2ff}
+    .chatbot-input input{flex:1;padding:8px;border-radius:8px;border:1px solid #e6e9ef}
+
+    /* Responsive */
+    @media(max-width:880px){
+      .hero{grid-template-columns:1fr}
+      nav ul{display:none}
+      .mobile-nav{display:block}
+    }
+
+    /* subtle entrance */
+    .fade-up{animation:fadeUp .6s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">PW</div>
+        <div>
+          <div style="font-weight:800">ProWellbeing</div>
+          <div style="font-size:12px;color:var(--muted)">Student Support & Engagement</div>
+        </div>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#study">Study</a></li>
+          <li><a href="#quiz">Quiz</a></li>
+          <li><a href="#mock">Mock Test</a></li>
+          <li><a href="#live">Live</a></li>
+          <li><a href="#chatbot">Chatbot</a></li>
+        </ul>
+      </nav>
+
+      <div class="actions">
+        <button class="btn">Teacher View</button>
+        <button class="btn primary" id="joinBtn">Join Live</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="home" class="hero">
+      <div>
+        <span class="kicker">MVP Demo</span>
+        <h1>Help students beat stress, stay engaged, and learn better.</h1>
+        <p class="lead">ProWellbeing is a demo platform that combines quick wellbeing checks, interactive quizzes, mock tests, animated study tools, a demo chatbot, and a simulated live room — all in a single professional frontend you can run locally.</p>
+
+        <div class="grid-3">
+          <div class="card fade-up">
+            <h3>Wellbeing-aware</h3>
+            <p class="lead">Collect quick check-ins and show teachers class-level trends (backend integration available).</p>
+          </div>
+          <div class="card fade-up">
+            <h3>Interactive</h3>
+            <p class="lead">Quizzes, timed mock tests and live chat help keep students involved.</p>
+          </div>
+          <div class="card fade-up">
+            <h3>Guided Study</h3>
+            <p class="lead">Animated study cards and a pomodoro-style timer to reduce fatigue.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Quick demo</h3>
+        <p style="color:var(--muted)">Open the <strong>Live</strong> panel in two browser tabs to simulate students interacting in real time. Use the Chatbot for quick help or the Quiz/Mock Test to practice.</p>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn primary" onclick="scrollToSection('quiz')">Try a Quiz</button>
+          <button class="btn" onclick="scrollToSection('study')">Study Mode</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDY -->
+    <section id="study" style="margin-top:28px">
+      <h2>Study — Focused learning with animations</h2>
+      <div class="grid-3">
+        <div class="study-card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="pill">Quick Concept</div>
+              <h3>Active Recall</h3>
+              <p style="color:var(--muted)">Flashcard-style prompts to strengthen memory.</p>
+            </div>
+            <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,#fff,#f3f8ff);display:flex;align-items:center;justify-content:center">📚</div>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn" onclick="openFlashcard('Active Recall','Try to explain the concept in your own words for 60 seconds.')">Open</button>
+          </div>
+        </div>
+
+        <div class="study-card">
+          <div class="pill">Animation</div>
+          <h3>Pomodoro Timer</h3>
+          <p style="color:var(--muted)">25 minutes focus, 5 minutes break — helps reduce digital fatigue.</p>
+          <div style="margin-top:8px">
+            <button class="btn" onclick="startPomodoro(25)">Start 25m</button>
+          </div>
+        </div>
+
+        <div class="study-card">
+          <div class="pill">Practice</div>
+          <h3>Visual Notes</h3>
+          <p style="color:var(--muted)">Animated cards make revision less stressful.</p>
+          <div style="margin-top:8px">
+            <button class="btn" onclick="openVisual('Mind Map','Use this area to jot down a quick map of ideas.')">Open</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" style="margin-top:28px">
+      <h2>Practice Quiz</h2>
+      <div class="card">
+        <div id="quizArea"></div>
+      </div>
+    </section>
+
+    <!-- MOCK -->
+    <section id="mock" style="margin-top:28px">
+      <h2>Mock Test (Timed)</h2>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>Time left: <span class="timer" id="mockTimer">--:--</span></div>
+          <div><button class="btn" id="startMock">Start Mock Test (5 min)</button></div>
+        </div>
+        <div id="mockArea" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <!-- LIVE -->
+    <section id="live" style="margin-top:28px">
+      <h2>Live Room — Simulated Realtime</h2>
+      <div class="card live-room">
+        <div class="messages" id="liveMessages"></div>
+        <div style="display:flex;gap:8px;padding-top:8px">
+          <input id="liveInput" placeholder="Send a message to the room" />
+          <button class="btn primary" id="liveSend">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHATBOT -->
+    <section id="chatbot" style="margin-top:28px">
+      <h2>Chatbot — Quick Help</h2>
+      <div class="card">
+        <p class="lead" style="color:var(--muted)">A demo chatbot that answers common study and wellbeing questions. For advanced AI behavior, wire this to a server-side AI API.</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <input id="botQuick" placeholder="Ask something like 'I'm stressed'" />
+          <button class="btn primary" id="botAsk">Ask</button>
+        </div>
+        <div id="botAnswer" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <footer style="margin:28px 0;color:var(--muted);text-align:center">ProWellbeing — Demo UI • Replace with backend integrations for production</footer>
+  </main>
+
+  <!-- Chatbot floating -->
+  <button class="chatbot-btn" id="chatToggle">Chat</button>
+  <div class="chatbot-panel" id="chatPanel" style="display:none">
+    <div class="chatbot-header">Study Assistant</div>
+    <div class="chatbot-body">
+      <div class="chatbot-log" id="chatLog"></div>
+      <div class="chatbot-input">
+        <input id="chatMsg" placeholder="Type a question..." />
+        <button class="btn primary" id="chatSend">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Helper: smooth scroll
+    function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});}    
+
+    // ---------- Flashcard & Visual modal (simple alerts for demo)
+    function openFlashcard(title, text){alert(title+"\n\n"+text)}
+    function openVisual(title, text){alert(title+"\n\n"+text)}
+
+    // ---------- Pomodoro (simple)
+    let pomTimer;
+    function startPomodoro(minutes=25){clearInterval(pomTimer); let seconds=minutes*60; const orig=seconds; const notify=()=>{const m=Math.floor(seconds/60); const s=seconds%60; alert('Pomodoro finished!');};
+      pomTimer = setInterval(()=>{seconds--; if(seconds<=0){clearInterval(pomTimer); alert('Pomodoro complete — take a 5 minute break!')}} ,1000);
+      alert('Pomodoro started for '+minutes+' minutes (demo).')}
+
+    // ---------- Quiz: questions (customize easily)
+    const quizQuestions = [
+      {q:'Which technique helps strengthen memory by self-recall?', options:['Rereading','Active recall','Highlighting','Watching videos'], a:1},
+      {q:'A short focused study slot followed by a break is known as?', options:['Pomodoro','Flashcards','Mind map','Project-based'], a:0}
+    ];
+
+    function renderQuiz(){
+      const area = document.getElementById('quizArea'); area.innerHTML='';
+      quizQuestions.forEach((qq, idx)=>{
+        const card = document.createElement('div'); card.className='card'; card.style.marginBottom='12px';
+        const h = document.createElement('h4'); h.textContent = 'Q'+(idx+1)+': '+qq.q; card.appendChild(h);
+        qq.options.forEach((opt,i)=>{
+          const op = document.createElement('div'); op.className='option'; op.textContent = opt; op.onclick = ()=>{
+            if(i===qq.a){ op.classList.add('correct'); alert('Correct!'); } else { op.classList.add('wrong'); alert('Wrong — correct: '+qq.options[qq.a]); }
+          };
+          card.appendChild(op);
+        });
+        area.appendChild(card);
+      });
+    }
+    renderQuiz();
+
+    // ---------- Mock Test: timed
+    const mockQuestions = [
+      {q:'What is the most effective single study technique?', options:['Highlighting','Active recall','Passive reading','Listening'], a:1},
+      {q:'What should you do after feeling fatigued?', options:['Keep studying','Take a short break','Skip learning','All of the above'], a:1}
+    ];
+    let mockState = {running:false, timeLeft:0, index:0, score:0};
+    const mockTimerEl = document.getElementById('mockTimer');
+
+    document.getElementById('startMock').addEventListener('click', ()=>{
+      startMock(5); // 5 minutes for demo
+    });
+
+    function startMock(minutes=5){
+      mockState = {running:true, timeLeft:minutes*60, index:0, score:0};
+      renderMock();
+      const t = setInterval(()=>{
+        if(!mockState.running){ clearInterval(t); return; }
+        mockState.timeLeft--; if(mockState.timeLeft<=0){ clearInterval(t); finishMock(); }
+        mockTimerEl.textContent = formatTime(mockState.timeLeft);
+      },1000);
+    }
+
+    function finishMock(){mockState.running=false; mockTimerEl.textContent='00:00'; alert('Mock finished. Score: '+mockState.score+'/'+mockQuestions.length); localStorage.setItem('mock-last', JSON.stringify({score:mockState.score,total:mockQuestions.length,date:new Date()}));}
+
+    function renderMock(){
+      const area = document.getElementById('mockArea'); area.innerHTML='';
+      const mq = mockQuestions[mockState.index];
+      if(!mq){ area.innerHTML = '<p>No more questions.</p>'; return; }
+      const h = document.createElement('h3'); h.textContent = 'Q'+(mockState.index+1)+': '+mq.q; area.appendChild(h);
+      mq.options.forEach((o,i)=>{
+        const b = document.createElement('button'); b.className='btn'; b.style.display='block'; b.style.marginTop='8px'; b.textContent=o; b.onclick = ()=>{ if(i===mq.a){ mockState.score++; alert('Correct!'); } else alert('Wrong.'); mockState.index++; renderMock(); };
+        area.appendChild(b);
+      });
+    }
+
+    function formatTime(sec){ const m = String(Math.floor(sec/60)).padStart(2,'0'); const s = String(sec%60).padStart(2,'0'); return m+':'+s }
+
+    // ---------- Live Room: BroadcastChannel with localStorage fallback
+    const channelName = 'prowellbeing-live';
+    let broadcaster = null;
+    try{ if('BroadcastChannel' in window){ broadcaster = new BroadcastChannel(channelName); broadcaster.onmessage = ev => receiveLive(ev.data); } } catch(e){}
+
+    window.addEventListener('storage', e=>{ if(e.key===channelName){ try{ const data = JSON.parse(e.newValue); if(data && data.type==='message') receiveLive(data.payload); }catch{} } });
+
+    function sendLive(payload){
+      if(broadcaster){ broadcaster.postMessage(payload); }
+      else { localStorage.setItem(channelName, JSON.stringify({type:'message',payload})); }
+      renderLiveMessage(payload,true);
+    }
+
+    function receiveLive(payload){ renderLiveMessage(payload,false); }
+
+    function renderLiveMessage(payload, self){
+      const container = document.getElementById('liveMessages');
+      const div = document.createElement('div'); div.className = 'msg' + (self? ' you' : '');
+      div.textContent = (payload.name? payload.name+': ' : '') + payload.text;
+      container.appendChild(div); container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('liveSend').addEventListener('click', ()=>{
+      const input = document.getElementById('liveInput'); const text = input.value.trim(); if(!text) return; sendLive({name:localName(), text}); input.value='';
+    });
+
+    function localName(){ let n = localStorage.getItem('prowell_name'); if(!n){ n = 'Student'+Math.floor(Math.random()*900+100); localStorage.setItem('prowell_name', n); } return n }
+
+    // ---------- Chatbot (demo rule-based)
+    const botReplies = {
+      'stress': "If you're feeling stressed, try a 3-minute breathing break: inhale 4s — hold 4s — exhale 6s. Also try breaking tasks into 10-minute chunks.",
+      'study': "Active recall and spaced repetition work best. Try a short quiz after each reading session.",
+      'tired': "Short breaks, hydration, and 5 minutes of movement can help. Also consider a short nap if possible.",
+      'default': "I'm a study assistant. Ask about study tips, time management, or say 'stress' to get quick breathing advice."
+    };
+
+    function botAnswer(text){
+      const t = text.toLowerCase(); if(t.includes('stress')) return botReplies.stress; if(t.includes('study')||t.includes('learn')) return botReplies.study; if(t.includes('tired')||t.includes('fatigue')) return botReplies.tired; return botReplies.default;
+    }
+
+    document.getElementById('botAsk').addEventListener('click', ()=>{
+      const q = document.getElementById('botQuick').value.trim(); if(!q) return; const a = botAnswer(q); document.getElementById('botAnswer').textContent = a; document.getElementById('botQuick').value='';
+    });
+
+    // floating chatbot
+    const chatToggle = document.getElementById('chatToggle'); const chatPanel = document.getElementById('chatPanel'); const chatLog = document.getElementById('chatLog');
+    chatToggle.addEventListener('click', ()=>{ chatPanel.style.display = chatPanel.style.display === 'none' ? 'flex' : 'none'; });
+    document.getElementById('chatSend').addEventListener('click', ()=>{ const v = document.getElementById('chatMsg').value.trim(); if(!v) return; appendChat('You', v); setTimeout(()=>{ appendChat('Assistant', botAnswer(v)); }, 600); document.getElementById('chatMsg').value=''; });
+
+    function appendChat(who, text){ const d = document.createElement('div'); d.style.padding='8px'; d.style.borderRadius='8px'; d.style.background = who==='You' ? '#eef2ff' : '#f1f5f9'; d.textContent = who+': '+text; chatLog.appendChild(d); chatLog.scrollTop = chatLog.scrollHeight; }
+
+    // ---------- Initial setup
+    document.addEventListener('DOMContentLoaded', ()=>{ // fill mock timer
+      mockTimerEl.textContent='05:00';
+      // show a welcome message in live room
+      renderLiveMessage({name:'System', text:'Welcome to the Live Room. Open another tab to simulate classmates.'}, false);
+    });
+
+    // ---------- simple teacher join
+    document.getElementById('joinBtn').addEventListener('click', ()=>{
+      alert('Teacher view is a placeholder in this demo. In a full app, this would open analytics and class filters.');
+    });
+
+    // ---------- small accessibility: enter to send in chatbot
+    document.getElementById('chatMsg').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){e.preventDefault(); document.getElementById('chatSend').click();} });
+    document.getElementById('liveInput').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){e.preventDefault(); document.getElementById('liveSend').click();} });
+
+  </script> 
+</body>
+</html>
